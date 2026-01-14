@@ -11,21 +11,15 @@ export async function manualAuthentication(
     page: Page,
     context: BrowserContext
 ) {
-    log(LOG_SCOPE.AUTH, LOG_MESSAGES.AUTH.LOGIN_REQUIRED)
-
     await ensureAuthenticated(page)
 
     const currentUrl = page.url()
 
     if (currentUrl.includes(ROUTES.login)) {
-        log(LOG_SCOPE.AUTH, LOG_MESSAGES.AUTH.LOGIN_REQUIRED)
-
         await waitForHumanLogin(page, /\/dashboard$/);
 
         await saveSession(context, SESSION_PATH);
-    } else {
-        log(LOG_SCOPE.AUTH, LOG_MESSAGES.AUTH.EXISTING_SESSION)
     }
 
-    log("AUTH", LOG_MESSAGES.AUTH.AUTH_COMPLETE);
+    log(LOG_SCOPE.AUTH, LOG_MESSAGES.AUTH.SUCCESS);
 }

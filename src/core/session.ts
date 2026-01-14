@@ -6,9 +6,9 @@ export async function saveSession(
     context: BrowserContext,
     path: string
 ) {
-    log(LOG_SCOPE.SESSION, LOG_MESSAGES.SESSION.SAVING_SESSION, { path })
+    log(LOG_SCOPE.SESSION, LOG_MESSAGES.SESSION.SAVING, { path })
 
     await context.storageState({ path })
 
-    log(LOG_SCOPE.SESSION, LOG_MESSAGES.SESSION.SAVED_SESSION)
+    log(LOG_SCOPE.SESSION, LOG_MESSAGES.SESSION.SAVED)
 }

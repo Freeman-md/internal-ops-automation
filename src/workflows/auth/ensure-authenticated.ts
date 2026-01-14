@@ -26,16 +26,16 @@ export async function ensureAuthenticated(page: Page) {
     ]);
 
     if (isAuthenticated) {
-        log(LOG_SCOPE.AUTH, LOG_MESSAGES.AUTH.SESSION_VALID)
+        log(LOG_SCOPE.SESSION, LOG_MESSAGES.SESSION.VALID)
         return;
     }
 
-    log(LOG_SCOPE.AUTH, LOG_MESSAGES.AUTH.UNAUTHENTICATED_DETECTED);
+    log(LOG_SCOPE.SESSION, LOG_MESSAGES.SESSION.MISSING);
     await redirectToLogin(page);
 }
 
 async function redirectToLogin(page: Page) {
-    log(LOG_SCOPE.AUTH, LOG_MESSAGES.AUTH.LOGIN_REDIRECT)
+    log(LOG_SCOPE.NAV, LOG_MESSAGES.NAV.REDIRECT_LOGIN)
 
     await page.goto(`${APP_URL}${ROUTES.login}`, {
         waitUntil: "domcontentloaded",
@@ -49,6 +49,4 @@ async function redirectToLogin(page: Page) {
     if (!loginVisible) {
         throw new SessionExpiredError();
     }
-
-    log(LOG_SCOPE.AUTH, LOG_MESSAGES.AUTH.LOGIN_READY);
 }
