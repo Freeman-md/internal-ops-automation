@@ -30,8 +30,7 @@ export async function ensureAuthenticated(page: Page) {
 
     if (loggedOut) {
         log(LOG_SCOPE.SESSION, LOG_MESSAGES.SESSION.MISSING);
-        await redirectToLogin(page);
-        return;
+        throw new SessionExpiredError();
     }
 
     throw new SessionExpiredError();
