@@ -1,8 +1,8 @@
+import { SessionExpiredError } from './../../core/errors';
 import { ROUTES, APP_URL, AUTH_INDICATORS } from './../../config/app';
 import { Page } from "playwright";
 import { log } from "../../core/logger";
 import { LOG_MESSAGES, LOG_SCOPE } from "../../config/logging";
-import { SessionExpiredError } from '../../core/errors';
 
 export async function ensureAuthenticated(page: Page) {
     log(LOG_SCOPE.AUTH, LOG_MESSAGES.AUTH.CHECKING_STATE)
@@ -11,42 +11,44 @@ export async function ensureAuthenticated(page: Page) {
         waitUntil: "domcontentloaded"
     });
 
-    const isAuthenticated = await Promise.race([
-        page
-            .getByRole("heading", { name: AUTH_INDICATORS.loggedInHeading })
-            .waitFor({ state: "visible", timeout: 5000 })
-            .then(() => true)
-            .catch(() => false),
+    await page.waitForLoadState("networkidle");
 
-        page
-            .getByRole("heading", { name: AUTH_INDICATORS.loginHeading })
-            .waitFor({ state: 'visible', timeout: 5000 })
-            .then(() => false)
-            .catch(() => false)
-    ]);
+    const loggedIn = await page
+        .getByRole("heading", { name: AUTH_INDICATORS.loggedInHeading })
+        .isVisible()
+        .catch(() => false);
 
-    if (isAuthenticated) {
-        log(LOG_SCOPE.SESSION, LOG_MESSAGES.SESSION.VALID)
+    const loggedOut = await page
+        .getByRole("heading", { name: AUTH_INDICATORS.loginHeading })
+        .isVisible()
+        .catch(() => false);
+
+    if (loggedIn && !loggedOut) {
+        log(LOG_SCOPE.SESSION, LOG_MESSAGES.SESSION.VALID);
         return;
     }
 
-    log(LOG_SCOPE.SESSION, LOG_MESSAGES.SESSION.MISSING);
-    await redirectToLogin(page);
+    if (loggedOut) {
+        log(LOG_SCOPE.SESSION, LOG_MESSAGES.SESSION.MISSING);
+        await redirectToLogin(page);
+        return;
+    }
+
+    throw new SessionExpiredError();
 }
 
 async function redirectToLogin(page: Page) {
     log(LOG_SCOPE.NAV, LOG_MESSAGES.NAV.REDIRECT_LOGIN)
 
-    await page.goto(`${APP_URL}${ROUTES.login}`, {
-        waitUntil: "domcontentloaded",
-    });
-
-    const loginVisible = await page
-        .getByRole("heading", { name: AUTH_INDICATORS.loginHeading })
-        .isVisible()
-        .catch(() => false)
-
-    if (!loginVisible) {
-        throw new SessionExpiredError();
+    if (!page.url().includes(ROUTES.login)) {
+        await page.goto(`${APP_URL}${ROUTES.login}`, {
+            waitUntil: "domcontentloaded",
+        });
     }
+
+    await page
+        .getByRole("heading", { name: AUTH_INDICATORS.loginHeading })
+        .waitFor({ timeout: 10_000 });
+
+    log(LOG_SCOPE.FLOW, LOG_MESSAGES.FLOW.AWAITING_MANUAL_LOGIN);
 }
