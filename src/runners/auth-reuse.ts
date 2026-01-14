@@ -1,6 +1,6 @@
 
 import { createPage } from "../core/browser";
-import { SESSION_PATH } from './../config/app';
+import { SESSION_PATH } from '../config/app';
 import { ensureAuthenticated } from "../workflows/auth/ensure-authenticated";
 
 
