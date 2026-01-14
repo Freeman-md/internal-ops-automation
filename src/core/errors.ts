@@ -9,3 +9,9 @@ export class NavigationError extends Error {
         super(message)
     }
 }
+
+export class AuthenticationFailedError extends Error {
+  constructor() {
+    super("Authentication failed after retries");
+  }
+}
