@@ -49,6 +49,4 @@ async function redirectToLogin(page: Page) {
     await page
         .getByRole("heading", { name: AUTH_INDICATORS.loginHeading })
         .waitFor({ timeout: 10_000 });
-
-    log(LOG_SCOPE.FLOW, LOG_MESSAGES.FLOW.AWAITING_MANUAL_LOGIN);
 }
