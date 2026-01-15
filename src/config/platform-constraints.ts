@@ -1,20 +1,35 @@
-export const TRIAGE_STATES = ["pending", "processed"] as const;
+// src/config/platform-constraints.ts
 
-export const TICKET_STATES = ["open", "in_progress", "resolved"] as const;
+export const TRIAGE_STATES = {
+  PENDING: "pending",
+  PROCESSED: "processed",
+} as const;
 
-export const TICKET_TRANSITIONS: Record<string, string[]> = {
-  open: ["in_progress"],
-  in_progress: ["resolved"],
-  resolved: []
+export type TriageState =
+  (typeof TRIAGE_STATES)[keyof typeof TRIAGE_STATES];
+
+export const TICKET_STATES = {
+  OPEN: "open",
+  IN_PROGRESS: "in_progress",
+  RESOLVED: "resolved",
+} as const;
+
+export type TicketState =
+  (typeof TICKET_STATES)[keyof typeof TICKET_STATES];
+
+export const TICKET_TRANSITIONS: Record<TicketState, TicketState[]> = {
+  [TICKET_STATES.OPEN]: [TICKET_STATES.IN_PROGRESS],
+  [TICKET_STATES.IN_PROGRESS]: [TICKET_STATES.RESOLVED],
+  [TICKET_STATES.RESOLVED]: [],
 };
 
-export const TRIAGE_ACTIONS_BY_STATE: Record<string, string[]> = {
-  pending: ["processed"],
-  processed: [],
+export const TRIAGE_ACTIONS_BY_STATE: Record<TriageState, string[]> = {
+  [TRIAGE_STATES.PENDING]: ["processed"],
+  [TRIAGE_STATES.PROCESSED]: [],
 };
 
-export const TICKET_ACTIONS_BY_STATE: Record<string, string[]> = {
-  open: ["start"],
-  in_progress: ["resolve"],
-  resolved: []
+export const TICKET_ACTIONS_BY_STATE: Record<TicketState, string[]> = {
+  [TICKET_STATES.OPEN]: ["start"],
+  [TICKET_STATES.IN_PROGRESS]: ["resolve"],
+  [TICKET_STATES.RESOLVED]: [],
 };

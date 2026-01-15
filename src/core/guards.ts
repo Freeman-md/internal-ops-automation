@@ -7,7 +7,7 @@ export function assertValidTicketTransition(
     current: string,
     next: string
 ) {
-    if (!TICKET_STATES.includes(current as any)) {
+    if (!Object.values(TICKET_STATES).includes(current as any)) {
         throw new Error(`Invalid ticket state: ${current}`);
     }
 
@@ -20,7 +20,7 @@ export function assertTriageActionAllowed(
   currentState: string,
   action: string
 ) {
-  if (!TRIAGE_STATES.includes(currentState as any)) {
+  if (!Object.values(TRIAGE_STATES).includes(currentState as any)) {
     throw new Error(`Invalid triage state: ${currentState}`);
   }
 

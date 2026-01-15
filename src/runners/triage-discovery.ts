@@ -2,6 +2,7 @@ import fs from "fs";
 import { createPage } from "@/core/browser";
 import { SESSION_PATH } from "@/config/app";
 import { withAuth } from "@/core/guards";
+import { processTriageItem } from "@/workflows/triage/process-item";
 
 async function run() {
   const hasSession = fs.existsSync(SESSION_PATH);
@@ -13,8 +14,15 @@ async function run() {
 
   try {
     await withAuth(page, context, async () => {
-      console.log("[FLOW] Protected workflow running");
-      await page.goto("https://internal-ops.lovable.app/dashboard");
+      const result = await processTriageItem(page, {
+        selector: {
+          state: "pending",
+          limit: 10,
+        },
+        expectedState: "pending",
+      });
+
+      console.log(result);
     });
   } finally {
     await browser.close();
