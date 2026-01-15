@@ -1,4 +1,4 @@
-import { LogEvent, LogLevel, LogSink } from "./types";
+import { LogEvent, LogLevel, LogSink } from "../types/logging";
 
 const consoleSink: LogSink = (event) => {
     const prefix = `[${event.scope}]`;

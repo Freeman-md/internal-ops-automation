@@ -1,13 +1,13 @@
 import fs from "fs";
 import { createPage } from "../core/browser";
-import { withAuth } from "../workflows/auth/auth-guard";
 import { SESSION_PATH } from "../config/app";
+import { withAuth } from "../core/guards";
 
 async function run() {
   const hasSession = fs.existsSync(SESSION_PATH);
 
   const { browser, context, page } = await createPage({
-    headless: hasSession,
+    headless: false,
     storageState: hasSession ? SESSION_PATH : undefined,
   });
 

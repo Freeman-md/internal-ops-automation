@@ -1,11 +1,10 @@
 import fs from "fs";
 import { Page, BrowserContext } from "playwright";
-import { APP_URL, ROUTES, SESSION_PATH, AUTH_INDICATORS } from "../../config/app";
-import { log } from "../../core/logger";
-import { LOG_SCOPE, LOG_MESSAGES } from "../../config/logging";
-import { saveSession } from "../../core/session";
-import { waitForHumanLogin } from "../../human/gates";
-import { SessionExpiredError } from "../../core/errors";
+import { APP_URL, ROUTES, SESSION_PATH, AUTH_INDICATORS } from "../config/app";
+import { log } from "../core/logger";
+import { LOG_SCOPE, LOG_MESSAGES } from "../config/logging";
+import { saveSession } from "../core/session";
+import { waitForHumanLogin } from "../human/gates";
 
 export async function authenticate(
   page: Page,
