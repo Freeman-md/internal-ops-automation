@@ -1,6 +1,6 @@
 import { BrowserContext } from "playwright";
-import { log } from "./logger";
-import { LOG_MESSAGES, LOG_SCOPE } from "../config/logging";
+import { log } from "@/core/logger";
+import { LOG_MESSAGES, LOG_SCOPE } from "@/config/logging";
 
 export async function saveSession(
     context: BrowserContext,

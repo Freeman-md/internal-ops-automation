@@ -1,7 +1,7 @@
 import fs from "fs";
-import { createPage } from "../core/browser";
-import { SESSION_PATH } from "../config/app";
-import { withAuth } from "../core/guards";
+import { createPage } from "@/core/browser";
+import { SESSION_PATH } from "@/config/app";
+import { withAuth } from "@/core/guards";
 
 async function run() {
   const hasSession = fs.existsSync(SESSION_PATH);

@@ -1,7 +1,7 @@
-import { TRIAGE_ACTIONS_BY_STATE } from './../config/platform-constraints';
+import { TRIAGE_ACTIONS_BY_STATE } from "@/config/platform-constraints";
 import { BrowserContext, Page } from "playwright";
-import { TICKET_STATES, TICKET_TRANSITIONS, TRIAGE_STATES } from "../config/platform-constraints";
-import { authenticate } from "../workflows/authenticate";
+import { TICKET_STATES, TICKET_TRANSITIONS, TRIAGE_STATES } from "@/config/platform-constraints";
+import { authenticate } from "@/workflows/authenticate";
 
 export function assertValidTicketTransition(
     current: string,
