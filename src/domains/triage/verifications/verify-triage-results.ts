@@ -1,6 +1,7 @@
 import { TRIAGE_STATES, TriageState } from "@/config/platform-constraints";
 import { Page } from "playwright";
 import { collectTriageItems } from "../selectors/collect-triage-items";
+import { VerificationError } from "@/core/errors";
 
 export async function verifyTriageResults(
     page: Page,
@@ -15,18 +16,21 @@ export async function verifyTriageResults(
         const item = snapshot.find(i => i.id === id);
 
         if (!item) {
-            throw new Error(`Acted item ${id} missing after action`);
+            throw new VerificationError(`Acted item ${id} missing after action`, { id });
         }
 
         if (
             item.state !== TRIAGE_STATES.PROCESSED &&
             item.state !== TRIAGE_STATES.FAILED
         ) {
-            throw new Error(`Invalid final state for ${id}: ${item.state}`);
+            throw new VerificationError(`Invalid final state for ${id}: ${item.state}`, {
+                id,
+                state: item.state,
+            });
         }
 
         if (!(await item.actionButton.isDisabled())) {
-            throw new Error(`Action button still enabled for ${id}`);
+            throw new VerificationError(`Action button still enabled for ${id}`, { id });
         }
 
         finalStates[id] = item.state;
@@ -36,14 +40,20 @@ export async function verifyTriageResults(
     const afterCounts = await readStateSummary(page);
 
     if (afterCounts.pending >= beforeCounts.pending) {
-        throw new Error("Pending count did not decrease");
+        throw new VerificationError("Pending count did not decrease", {
+            beforeCounts,
+            afterCounts,
+        });
     }
 
     if (
         afterCounts.processed <= beforeCounts.processed &&
         afterCounts.failed <= beforeCounts.failed
     ) {
-        throw new Error("Neither processed nor failed count increased");
+        throw new VerificationError("Neither processed nor failed count increased", {
+            beforeCounts,
+            afterCounts,
+        });
     }
 
     return finalStates;

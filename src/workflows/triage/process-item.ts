@@ -8,16 +8,14 @@ import { processTriageItems } from "@/domains/triage/actions/process-triage-item
 import { readStateSummary, verifyTriageResults } from "@/domains/triage/verifications/verify-triage-results";
 import { log } from "@/core/logger";
 import { LOG_SCOPE } from "@/config/logging";
+import { AssertionError } from "@/core/errors";
 
 export async function processTriageItem(
   page: Page,
   input: ProcessTriageInput
 ): Promise<WorkflowResult> {
   if (!input.selector.state) {
-    return {
-      status: WorkflowStatus.FAILED,
-      reason: "Missing selector.state",
-    };
+    throw new AssertionError("Missing selector.state", { selector: input.selector });
   }
 
   await page.goto(`${APP_URL}/triage`);
