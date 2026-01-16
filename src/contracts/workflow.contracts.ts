@@ -1,4 +1,4 @@
-import { Priority, TriageState } from "@/contracts/domain.contracts";
+import { Priority, TicketState, TriageState } from "@/contracts/domain.contracts";
 
 export type WorkflowStatus = "SUCCESS" | "FAILED" | "SKIPPED";
 
@@ -25,9 +25,16 @@ export type WorkflowResult = {
 export type ProcessTriageInput = WorkFlowInput & {
   selector: {
     state: TriageState;
-    limit: number;                    
-    priority?: Priority;
     olderThan?: string;
   };
   expectedState: TriageState;
+};
+
+
+export type ProcessTicketsInput = {
+  selector: {
+    state: TicketState;
+    limit: number;
+  };
+  expectedState: TicketState;
 };

@@ -1,6 +1,6 @@
 import { AssertionError } from "@/domain/errors/assertion.error";
-import { TICKET_TRANSITIONS } from "@/domain/tickets/ticket.rules";
-import { TICKET_STATES } from "@/domain/tickets/ticket.states";
+import { TICKET_TRANSITIONS } from "@/domain/tickets/rules";
+import { TICKET_STATES } from "@/domain/tickets/states";
 
 export function assertValidTicketTransition(
   current: string,

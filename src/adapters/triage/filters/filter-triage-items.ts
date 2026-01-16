@@ -13,12 +13,6 @@ export function filterTriageItems(
         )
     }
 
-    // 2. olderThan (future-ready, no suitable fields in UI)
-    // if (selector.olderThan) {}
-
-    // 3. priority (future-ready, no suitable fields in UI)
-    // if (selector.priority) {}
-
     if (selector.limit !== undefined) {
         result = result.slice(0, selector.limit)
     }

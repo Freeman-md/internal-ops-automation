@@ -1,4 +1,4 @@
-import { TICKET_STATES, TicketState } from "@/domain/tickets/ticket.states";
+import { TICKET_STATES, TicketState } from "@/domain/tickets/states";
 
 export const TICKET_TRANSITIONS: Record<TicketState, TicketState[]> = {
   [TICKET_STATES.OPEN]: [TICKET_STATES.IN_PROGRESS],
