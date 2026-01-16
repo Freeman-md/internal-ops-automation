@@ -20,16 +20,13 @@ export async function processTriageItem(
   await page.goto(`${APP_URL}/triage`);
 
   const triageItems = await collectTriageItems(page);
-
   const filteredTriageItems = filterTriageItems(triageItems, input.selector)
 
   if (filteredTriageItems.length === 0) {
     return {
       status: WorkflowStatus.SKIPPED,
       reason: "No triage items matched selector",
-      artifacts: {
-        matchedItems: [],
-      },
+      artifacts: { matchedItems: [] },
     };
   }
 

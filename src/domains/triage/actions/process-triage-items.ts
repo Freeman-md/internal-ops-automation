@@ -12,18 +12,21 @@ export async function processTriageItems(
     // Click action
     await item.actionButton.click();
 
-    // Wait for either:
-    // 1. Success alert mentioning the item
-    // 2. State badge changing to "processed"
+    const row = page
+      .locator("code", { hasText: item.id })
+      .locator("..")
+      .locator("..");
+
+    // Wait for either processed OR failed outcome
     await Promise.race([
-      page.getByRole("alert")
+      page
+        .getByRole("alert")
         .filter({ hasText: item.id })
         .waitFor({ timeout: 5_000 }),
 
-      page.locator(`code:text("${item.id}")`)
-        .locator("..")
-        .locator(`text=${TRIAGE_STATES.PROCESSED}`)
-        .waitFor({ timeout: 5_000 }),
+      row.locator(`text=${TRIAGE_STATES.PROCESSED}`).waitFor({ timeout: 5_000 }),
+
+      row.locator(`text=${TRIAGE_STATES.FAILED}`).waitFor({ timeout: 5_000 }),
     ]);
 
     actedOn.push(item.id);

@@ -3,6 +3,7 @@
 export const TRIAGE_STATES = {
   PENDING: "pending",
   PROCESSED: "processed",
+  FAILED: "failed",
 } as const;
 
 export type TriageState =
@@ -26,6 +27,7 @@ export const TICKET_TRANSITIONS: Record<TicketState, TicketState[]> = {
 export const TRIAGE_ACTIONS_BY_STATE: Record<TriageState, string[]> = {
   [TRIAGE_STATES.PENDING]: ["processed"],
   [TRIAGE_STATES.PROCESSED]: [],
+  [TRIAGE_STATES.FAILED]: [],
 };
 
 export const TICKET_ACTIONS_BY_STATE: Record<TicketState, string[]> = {
