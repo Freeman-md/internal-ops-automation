@@ -1,10 +1,11 @@
-import { SESSION_PATH } from "@/config/app";
-import { authenticate } from "@/workflows/authenticate";
-import { executeWorkflow } from "@/infra/workflow-executor";
+import { SESSION_PATH } from "@/config/app.config";
+import { HEADED, WORKFLOW_RETRIES } from "@/config/runtime.config";
+import { authenticate } from "@/infra/auth/authenticate";
+import { executeWorkflow } from "@/infra/execute-workflow";
 
 async function run() {
-  const headed = process.env.HEADED === "1" || process.env.HEADED === "true";
-  const retries = Number(process.env.WORKFLOW_RETRIES ?? "1");
+  const headed = HEADED;
+  const retries = WORKFLOW_RETRIES;
 
   const result = await executeWorkflow(
     {

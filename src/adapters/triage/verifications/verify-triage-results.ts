@@ -1,0 +1,75 @@
+import { TRIAGE_STATES, TriageState } from "@/domain/triage/triage.states";
+import { Page } from "playwright";
+import { collectTriageItems } from "@/adapters/triage/selectors/collect-triage-items";
+import { VerificationError } from "@/domain/errors/verification.error";
+
+export async function verifyTriageResults(
+    page: Page,
+    actedOnItems: string[],
+    beforeCounts: { pending: number; processed: number; failed: number }
+): Promise<Record<string, TriageState>> {
+    const snapshot = await collectTriageItems(page);
+    const finalStates: Record<string, TriageState> = {};
+
+    // Per-item verification
+    for (const id of actedOnItems) {
+        const item = snapshot.find(i => i.id === id);
+
+        if (!item) {
+            throw new VerificationError(`Acted item ${id} missing after action`, { id });
+        }
+
+        if (
+            item.state !== TRIAGE_STATES.PROCESSED &&
+            item.state !== TRIAGE_STATES.FAILED
+        ) {
+            throw new VerificationError(`Invalid final state for ${id}: ${item.state}`, {
+                id,
+                state: item.state,
+            });
+        }
+
+        if (!(await item.actionButton.isDisabled())) {
+            throw new VerificationError(`Action button still enabled for ${id}`, { id });
+        }
+
+        finalStates[id] = item.state;
+    }
+
+    // Global verification
+    const afterCounts = await readStateSummary(page);
+
+    if (afterCounts.pending >= beforeCounts.pending) {
+        throw new VerificationError("Pending count did not decrease", {
+            beforeCounts,
+            afterCounts,
+        });
+    }
+
+    if (
+        afterCounts.processed <= beforeCounts.processed &&
+        afterCounts.failed <= beforeCounts.failed
+    ) {
+        throw new VerificationError("Neither processed nor failed count increased", {
+            beforeCounts,
+            afterCounts,
+        });
+    }
+
+    return finalStates;
+}
+
+export async function readStateSummary(page: Page) {
+  const summaryCard = page
+    .getByText(/state summary/i)
+    .locator("..")
+    .locator("..");
+
+  const values = summaryCard.locator("div.text-2xl.font-semibold");
+
+  return {
+    pending: Number(await values.nth(0).innerText()),
+    processed: Number(await values.nth(1).innerText()),
+    failed: Number(await values.nth(2).innerText()),
+  };
+}

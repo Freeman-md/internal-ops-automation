@@ -1,6 +1,6 @@
 import { Page } from "playwright";
-import { LOG_MESSAGES, LOG_SCOPE } from "@/config/logging";
-import { log } from "@/core/logger";
+import { LOG_MESSAGES, LOG_SCOPE } from "@/infra/logging/log.constants";
+import { log } from "@/infra/logging/logger";
 
 export async function waitForHumanLogin(
     page: Page,
