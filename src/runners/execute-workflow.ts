@@ -24,6 +24,6 @@ export async function executeWorkflow<T>({
     console.error(`[RUNNER] ${name} failed`, { durationMs, error: message });
     process.exitCode = 1;
 
-    throw error;
+    // throw error;
   }
 }
