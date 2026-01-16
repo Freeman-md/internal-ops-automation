@@ -4,6 +4,7 @@ import { collectTriageItems } from "@/domains/triage/selectors/collect-triage-it
 import { APP_URL } from "@/config/app";
 import { filterTriageItems } from "@/domains/triage/filters/filter-triage-items";
 import { assertTriageItemsReady } from "@/domains/triage/assertions/assert-triage-items-ready";
+import { processTriageItems } from "@/domains/triage/actions/process-triage-items";
 
 export async function processTriageItem(
   page: Page,
@@ -22,8 +23,6 @@ export async function processTriageItem(
 
   const filteredTriageItems = filterTriageItems(triageItems, input.selector)
 
-  await assertTriageItemsReady(filteredTriageItems, input.expectedState);
-
   if (filteredTriageItems.length === 0) {
     return {
       status: WorkflowStatus.SKIPPED,
@@ -34,11 +33,16 @@ export async function processTriageItem(
     };
   }
 
+  await assertTriageItemsReady(filteredTriageItems, input.expectedState);
+
+  const actedOnItems = await processTriageItems(page, filteredTriageItems);
+
   return {
     status: WorkflowStatus.SUCCESS,
     reason: "Triage items discovered",
     artifacts: {
       matchedItems: filteredTriageItems.map(item => item.id),
+      actedOnItems
     },
   };
 }
