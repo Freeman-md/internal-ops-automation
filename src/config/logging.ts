@@ -2,7 +2,8 @@ export const LOG_SCOPE = {
   AUTH: "AUTH",
   SESSION: "SESSION",
   NAV: "NAV",
-  FLOW: "FLOW"
+  FLOW: "FLOW",
+  TRIAGE: "TRIAGE"
 } as const;
 
 export const LOG_MESSAGES = {
