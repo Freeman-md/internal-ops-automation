@@ -1,42 +1,29 @@
-import fs from "fs";
-import { createPage } from "@/core/browser";
-import { authenticate } from "@/workflows/authenticate";
 import { SESSION_PATH } from "@/config/app";
-import { executeWorkflow } from "@/runners/execute-workflow";
+import { authenticate } from "@/workflows/authenticate";
+import { executeWorkflow } from "@/infra/workflow-executor";
 
 async function run() {
-  const hasSession = fs.existsSync(SESSION_PATH);
   const headed = process.env.HEADED === "1" || process.env.HEADED === "true";
   const retries = Number(process.env.WORKFLOW_RETRIES ?? "1");
-  const maxAttempts = Number.isFinite(retries) && retries > 0 ? Math.floor(retries) : 1;
 
-  const { browser, context, page } = await createPage({
-    headless: !headed,
-    storageState: hasSession ? SESSION_PATH : undefined,
-  });
-
-  try {
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-      try {
-        await executeWorkflow({
-          name: "authenticate",
-          execute: async () => {
-            await authenticate(page, context);
-          },
-        });
-        break;
-      } catch (error) {
-        if (attempt === maxAttempts) {
-          throw error;
-        }
-      }
+  const result = await executeWorkflow(
+    {
+      name: "authenticate",
+      requiresAuth: false,
+      run: async ({ page, context }) => authenticate(page, context),
+    },
+    {
+      headed,
+      retries,
+      storagePath: SESSION_PATH,
     }
-  } finally {
-    await browser.close();
+  );
+
+  console.log(result);
+
+  if (!result.success) {
+    process.exitCode = 1;
   }
 }
 
-run().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+run();

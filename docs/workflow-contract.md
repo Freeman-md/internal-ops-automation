@@ -17,19 +17,21 @@
 
 ## Execution Flow
 
-1. Runner initializes browser context -> handles auth -> calls workflow
-2. Workflow coordinates domain modules → selectors → assertions → actions → verifications
-3. Workflow returns `WorkflowResult` on success or throws an error on failure
+1. Runner calls the workflow executor with a workflow definition and options
+2. Executor initializes browser context -> loads storage -> optionally authenticates -> runs workflow
+3. Workflow coordinates domain modules -> selectors -> assertions -> actions -> verifications
+4. Workflow returns `WorkflowResult` on success or throws an error on failure
 
 ## Error Propagation Rules
 
 1. Assertions throw `AssertionError`
 2. Actions throw `ActionError`
 3. Verifications throw `VerificationError`
-4. Errors propagate to the runner, which logs and sets process exit codes
+4. Errors propagate to the executor, which logs and returns a failure result
 
 ## Output Contract
 
 1. `WorkflowResult.status` is `"SUCCESS"` or `"SKIPPED"` for successful completion
 2. `WorkflowResult.reason` is a human-readable summary
 3. `WorkflowResult.artifacts` includes optional matched items, acted-on items, and final states
+4. Executor returns `WorkflowExecutionResult` wrapping workflow success or failure
