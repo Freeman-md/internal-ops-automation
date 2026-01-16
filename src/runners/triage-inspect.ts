@@ -3,6 +3,9 @@ import { HEADED, WORKFLOW_RETRIES } from "@/config/runtime.config";
 import { inspectTriageQueue } from "@/app/workflows/triage/inspect-queue";
 import { executeWorkflow } from "@/infra/execute-workflow";
 
+console.log("HEADED ENV:", process.env.HEADED);
+console.log("HEADED CONFIG:", HEADED);
+
 async function run() {
   const result = await executeWorkflow(
     {

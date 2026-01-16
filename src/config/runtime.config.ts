@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 export const HEADED =
   process.env.HEADED === "1" || process.env.HEADED === "true";
 
