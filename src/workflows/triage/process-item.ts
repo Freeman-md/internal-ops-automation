@@ -1,6 +1,7 @@
 import { ProcessTriageInput, WorkflowResult, WorkflowStatus } from "@/types/workflow";
 import { Page } from "playwright";
 import { collectTriageItems } from "@/domains/triage/selectors/triage-items";
+import { APP_URL } from "@/config/app";
 
 export async function processTriageItem(
   page: Page,
@@ -13,7 +14,7 @@ export async function processTriageItem(
     };
   }
 
-  await page.goto("/triage");
+  await page.goto(`${APP_URL}/triage`);
 
   const items = await collectTriageItems(page);
 
@@ -21,7 +22,7 @@ export async function processTriageItem(
     status: WorkflowStatus.SUCCESS,
     reason: "Triage items discovered",
     artifacts: {
-      matchedItems: items.map(i => i.id),
+      matchedItems: items.map(item => item.id),
     },
   };
 }

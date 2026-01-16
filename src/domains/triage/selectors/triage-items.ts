@@ -9,7 +9,9 @@ export type TriageItem = {
 
 export async function collectTriageItems(page: Page): Promise<TriageItem[]> {
   // Assert page loaded
-  await page.getByRole("heading", { name: "Triage" }).waitFor();
+  await page.waitForLoadState("networkidle");
+  
+  await page.getByRole("heading", { level: 1, name: "Triage" }).waitFor();
 
   const rows = page.locator("div.divide-y > div.flex.items-center.justify-between");
 
