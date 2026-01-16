@@ -1,7 +1,8 @@
 import { ProcessTriageInput, WorkflowResult, WorkflowStatus } from "@/types/workflow";
 import { Page } from "playwright";
-import { collectTriageItems } from "@/domains/triage/selectors/triage-items";
+import { collectTriageItems } from "@/domains/triage/selectors/collect-triage-items";
 import { APP_URL } from "@/config/app";
+import { filterTriageItems } from "@/domains/triage/filters/filter-triage-items";
 
 export async function processTriageItem(
   page: Page,
@@ -16,13 +17,25 @@ export async function processTriageItem(
 
   await page.goto(`${APP_URL}/triage`);
 
-  const items = await collectTriageItems(page);
+  const triageItems = await collectTriageItems(page);
+
+  const filteredTriageItems = filterTriageItems(triageItems, input.selector)
+
+  if (filteredTriageItems.length === 0) {
+    return {
+      status: WorkflowStatus.SKIPPED,
+      reason: "No triage items matched selector",
+      artifacts: {
+        matchedItems: [],
+      },
+    };
+  }
 
   return {
     status: WorkflowStatus.SUCCESS,
     reason: "Triage items discovered",
     artifacts: {
-      matchedItems: items.map(item => item.id),
+      matchedItems: filteredTriageItems.map(item => item.id),
     },
   };
 }
