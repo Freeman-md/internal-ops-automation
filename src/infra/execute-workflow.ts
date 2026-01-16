@@ -10,6 +10,12 @@ export type WorkflowExecution<T> = {
   run: (ctx: { page: Page; context: BrowserContext }) => Promise<T>;
 };
 
+export type WorkflowError = {
+        type: "ASSERTION" | "ACTION" | "VERIFICATION" | "UNKNOWN";
+        message: string;
+        meta?: unknown;
+      }
+
 export type WorkflowExecutionResult<T> =
   | {
       success: true;
@@ -18,11 +24,7 @@ export type WorkflowExecutionResult<T> =
     }
   | {
       success: false;
-      error: {
-        type: "ASSERTION" | "ACTION" | "VERIFICATION" | "UNKNOWN";
-        message: string;
-        meta?: unknown;
-      };
+      error: WorkflowError;
       durationMs: number;
     };
 
@@ -34,7 +36,7 @@ type WorkflowExecutionOptions = {
 
 function normalizeError(
   error: unknown
-): WorkflowExecutionResult<never>["error"] {
+): WorkflowError {
   const message = error instanceof Error ? error.message : "Unknown error";
 
   if (error instanceof Error) {

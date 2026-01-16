@@ -1,5 +1,5 @@
-import { TRIAGE_ACTIONS_BY_STATE } from "@/domain/triage/triage.rules";
-import { TRIAGE_STATES } from "@/domain/triage/triage.states";
+import { TRIAGE_ACTIONS_BY_STATE } from "@/domain/triage/rules";
+import { TRIAGE_STATES } from "@/domain/triage/states";
 import { AssertionError } from "@/domain/errors/assertion.error";
 
 export function assertTriageActionAllowed(

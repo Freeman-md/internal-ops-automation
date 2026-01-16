@@ -1,5 +1,5 @@
 import { Page } from "playwright";
-import { TRIAGE_STATES } from "@/domain/triage/triage.states";
+import { TRIAGE_STATES } from "@/domain/triage/states";
 import { ActionError } from "@/domain/errors/action.error";
 import { TriageItem } from "@/adapters/triage/selectors/collect-triage-items";
 

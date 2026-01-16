@@ -1,4 +1,4 @@
-import { TRIAGE_STATES, TriageState } from "@/domain/triage/triage.states";
+import { TRIAGE_STATES, TriageState } from "@/domain/triage/states";
 
 export const TRIAGE_ACTIONS_BY_STATE: Record<TriageState, string[]> = {
   [TRIAGE_STATES.PENDING]: ["processed"],

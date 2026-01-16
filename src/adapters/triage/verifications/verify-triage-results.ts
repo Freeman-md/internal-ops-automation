@@ -1,4 +1,4 @@
-import { TRIAGE_STATES, TriageState } from "@/domain/triage/triage.states";
+import { TRIAGE_STATES, TriageState } from "@/domain/triage/states";
 import { Page } from "playwright";
 import { collectTriageItems } from "@/adapters/triage/selectors/collect-triage-items";
 import { VerificationError } from "@/domain/errors/verification.error";
@@ -60,16 +60,16 @@ export async function verifyTriageResults(
 }
 
 export async function readStateSummary(page: Page) {
-  const summaryCard = page
-    .getByText(/state summary/i)
-    .locator("..")
-    .locator("..");
+    const summaryCard = page
+        .getByText(/state summary/i)
+        .locator("..")
+        .locator("..");
 
-  const values = summaryCard.locator("div.text-2xl.font-semibold");
+    const values = summaryCard.locator("div.text-2xl.font-semibold");
 
-  return {
-    pending: Number(await values.nth(0).innerText()),
-    processed: Number(await values.nth(1).innerText()),
-    failed: Number(await values.nth(2).innerText()),
-  };
+    return {
+        pending: Number(await values.nth(0).innerText()),
+        processed: Number(await values.nth(1).innerText()),
+        failed: Number(await values.nth(2).innerText()),
+    };
 }

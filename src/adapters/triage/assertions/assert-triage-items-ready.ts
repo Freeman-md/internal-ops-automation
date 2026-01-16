@@ -1,5 +1,5 @@
-import { TriageState, TRIAGE_STATES } from "@/domain/triage/triage.states";
-import { assertTriageActionAllowed } from "@/domain/triage/triage.guards";
+import { TriageState, TRIAGE_STATES } from "@/domain/triage/states";
+import { assertTriageActionAllowed } from "@/domain/triage/guards";
 import { AssertionError } from "@/domain/errors/assertion.error";
 import { TriageItem } from "@/adapters/triage/selectors/collect-triage-items";
 
