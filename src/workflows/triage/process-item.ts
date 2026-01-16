@@ -3,6 +3,7 @@ import { Page } from "playwright";
 import { collectTriageItems } from "@/domains/triage/selectors/collect-triage-items";
 import { APP_URL } from "@/config/app";
 import { filterTriageItems } from "@/domains/triage/filters/filter-triage-items";
+import { assertTriageItemsReady } from "@/domains/triage/assertions/assert-triage-items-ready";
 
 export async function processTriageItem(
   page: Page,
@@ -20,6 +21,8 @@ export async function processTriageItem(
   const triageItems = await collectTriageItems(page);
 
   const filteredTriageItems = filterTriageItems(triageItems, input.selector)
+
+  await assertTriageItemsReady(filteredTriageItems, input.expectedState);
 
   if (filteredTriageItems.length === 0) {
     return {

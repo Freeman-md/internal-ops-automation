@@ -20,7 +20,6 @@ export type WorkFlowInput = {
         priority?: typeof Priority[keyof typeof Priority];
     },
     expectedState?: string;
-    allowedTransitions?: string[]
 }
 
 export type WorkflowResult = {
