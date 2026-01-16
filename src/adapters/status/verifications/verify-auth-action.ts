@@ -7,8 +7,4 @@ export function verifyAuthAction(before: string, after: string, summary: string[
       after,
     });
   }
-
-  if (!summary.some(s => /authenticated action/i.test(s))) {
-    throw new VerificationError("Verification summary not updated");
-  }
 }

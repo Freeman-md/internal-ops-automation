@@ -1,22 +1,15 @@
 import { Page } from "playwright";
 import { ActionError } from "@/domain/errors/action.error";
+import { readAuthenticatedActionValue } from "@/adapters/status/selectors/read-auth-action";
 
 export async function performAuthenticatedAction(page: Page): Promise<string> {
   try {
-    const button = page.getByRole("button", {
-      name: /perform authenticated action/i,
-    });
+    await page
+      .getByRole("button", { name: /perform authenticated action/i })
+      .click();
 
-    await button.click();
-
-    const value = await page
-      .locator("text=/last authenticated action/i")
-      .locator("..")
-      .locator("span")
-      .innerText();
-
-    return value.trim();
-  } catch (err) {
+    return await readAuthenticatedActionValue(page);
+  } catch {
     throw new ActionError("Failed to perform authenticated action");
   }
 }
