@@ -5,6 +5,7 @@ import { APP_URL } from "@/config/app";
 import { filterTriageItems } from "@/domains/triage/filters/filter-triage-items";
 import { assertTriageItemsReady } from "@/domains/triage/assertions/assert-triage-items-ready";
 import { processTriageItems } from "@/domains/triage/actions/process-triage-items";
+import { readStateSummary, verifyTriageResults } from "@/domains/triage/verifications/verify-triage-results";
 
 export async function processTriageItem(
   page: Page,
@@ -32,14 +33,23 @@ export async function processTriageItem(
 
   await assertTriageItemsReady(filteredTriageItems, input.expectedState);
 
+  const beforeCounts = await readStateSummary(page);
+
   const actedOnItems = await processTriageItems(page, filteredTriageItems);
+
+  const finalStates = await verifyTriageResults(
+    page,
+    actedOnItems,
+    beforeCounts
+  );
 
   return {
     status: WorkflowStatus.SUCCESS,
     reason: "Triage items discovered",
     artifacts: {
       matchedItems: filteredTriageItems.map(item => item.id),
-      actedOnItems
+      actedOnItems,
+      finalStates
     },
   };
 }
