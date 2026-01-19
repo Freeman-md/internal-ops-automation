@@ -17,6 +17,8 @@ export default defineConfig({
                     include: [
                         'tests/unit/**/*.{test,spec}.ts',
                         'tests/**/*.unit.{test,spec}.ts',
+                        'tests/integration/**/*.{test,spec}.ts',
+                        'tests/**/*.integration.{test,spec}.ts',
                     ],
                     name: 'unit',
                     environment: 'node',
