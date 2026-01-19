@@ -1,7 +1,7 @@
 import { TicketState, TICKET_STATES } from "@/domain/tickets/states";
 import { assertValidTicketTransition } from "@/domain/tickets/guards";
 import { AssertionError } from "@/domain/errors/assertion.error";
-import { TicketItem } from "@/adapters/tickets/selectors/collect-ticket-items";
+import { TicketItem } from "@/contracts/adapter.contracts";
 
 export async function assertTicketsReadyForStart(
   items: TicketItem[],

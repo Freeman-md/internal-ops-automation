@@ -1,19 +1,16 @@
 import { Page, Locator } from "playwright";
+import { TicketItem } from "@/contracts/adapter.contracts";
 
-export type TicketItem = {
-  id: string;
-  state: string;
-  actionButton: Locator;
-};
-
-export async function collectTicketItems(page: Page): Promise<TicketItem[]> {
+export async function collectTicketItems(
+  page: Page
+): Promise<TicketItem<Locator>[]> {
   await page.waitForLoadState("networkidle");
   await page.getByRole("heading", { level: 1, name: "Tickets" }).waitFor();
 
   const rows = page.locator("div.divide-y > div.flex.items-center.justify-between");
 
   const count = await rows.count();
-  const items: TicketItem[] = [];
+  const items: TicketItem<Locator>[] = [];
 
   for (let i = 0; i < count; i++) {
     const row = rows.nth(i);

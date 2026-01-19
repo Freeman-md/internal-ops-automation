@@ -1,7 +1,7 @@
 import { Page } from "playwright";
 import { TRIAGE_STATES } from "@/domain/triage/states";
 import { ActionError } from "@/domain/errors/action.error";
-import { TriageItem } from "@/adapters/triage/selectors/collect-triage-items";
+import { TriageItem } from "@/contracts/adapter.contracts";
 
 export async function processTriageItems(
   page: Page,

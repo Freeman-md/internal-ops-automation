@@ -1,7 +1,7 @@
 import { TriageState, TRIAGE_STATES } from "@/domain/triage/states";
 import { assertTriageActionAllowed } from "@/domain/triage/guards";
 import { AssertionError } from "@/domain/errors/assertion.error";
-import { TriageItem } from "@/adapters/triage/selectors/collect-triage-items";
+import { TriageItem } from "@/contracts/adapter.contracts";
 
 export async function assertTriageItemsReady(
     items: TriageItem[],

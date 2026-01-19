@@ -1,4 +1,4 @@
-import { TicketItem } from "@/adapters/tickets/selectors/collect-ticket-items";
+import { TicketItem } from "@/contracts/adapter.contracts";
 import { TICKET_STATES, TicketState } from "@/domain/tickets/states";
 import { VerificationError } from "@/domain/errors/verification.error";
 

@@ -1,5 +1,5 @@
 import { ProcessTicketsInput } from "@/contracts/workflow.contracts";
-import { TicketItem } from "@/adapters/tickets/selectors/collect-ticket-items";
+import { TicketItem } from "@/contracts/adapter.contracts";
 
 export function filterTicketItems(
   items: TicketItem[],

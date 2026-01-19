@@ -25,7 +25,7 @@ export type WorkflowResult = {
 export type ProcessTriageInput = WorkFlowInput & {
   selector: {
     state: TriageState;
-    olderThan?: string;
+    limit?: number;
   };
   expectedState: TriageState;
 };
@@ -34,7 +34,7 @@ export type ProcessTriageInput = WorkFlowInput & {
 export type ProcessTicketsInput = {
   selector: {
     state: TicketState;
-    limit: number;
+    limit?: number;
   };
   expectedState: TicketState;
 };

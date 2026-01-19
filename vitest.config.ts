@@ -1,12 +1,18 @@
 import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright'
 import tsconfigPaths from 'vite-tsconfig-paths';
+import path from "node:path";
 
 export default defineConfig({
     plugins: [tsconfigPaths()],
     test: {
         projects: [
             {
+                resolve: {
+                    alias: {
+                        "@": path.resolve(__dirname, "src"),
+                    },
+                },
                 test: {
                     include: [
                         'tests/unit/**/*.{test,spec}.ts',
@@ -17,6 +23,11 @@ export default defineConfig({
                 },
             },
             {
+                resolve: {
+                    alias: {
+                        "@": path.resolve(__dirname, "src"),
+                    },
+                },
                 test: {
                     name: 'browser',
                     include: [

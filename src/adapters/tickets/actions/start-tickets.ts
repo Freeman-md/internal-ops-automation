@@ -1,7 +1,7 @@
 import { Page } from "playwright";
 import { ActionError } from "@/domain/errors/action.error";
 import { TICKET_STATES } from "@/domain/tickets/states";
-import { TicketItem } from "@/adapters/tickets/selectors/collect-ticket-items";
+import { TicketItem } from "@/contracts/adapter.contracts";
 
 export async function startTickets(page: Page, items: TicketItem[]): Promise<string[]> {
   const actedOn: string[] = [];

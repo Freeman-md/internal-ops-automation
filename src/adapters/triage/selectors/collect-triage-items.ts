@@ -1,12 +1,9 @@
 import { Page, Locator } from "playwright";
+import { TriageItem } from "@/contracts/adapter.contracts";
 
-export type TriageItem = {
-  id: string;
-  state: string;
-  actionButton: Locator;
-};
-
-export async function collectTriageItems(page: Page): Promise<TriageItem[]> {
+export async function collectTriageItems(
+  page: Page
+): Promise<TriageItem<Locator>[]> {
   // Assert page loaded
   await page.waitForLoadState("networkidle");
   
@@ -15,7 +12,7 @@ export async function collectTriageItems(page: Page): Promise<TriageItem[]> {
   const rows = page.locator("div.divide-y > div.flex.items-center.justify-between");
 
   const count = await rows.count();
-  const items: TriageItem[] = [];
+  const items: TriageItem<Locator>[] = [];
 
   for (let i = 0; i < count; i++) {
     const row = rows.nth(i);

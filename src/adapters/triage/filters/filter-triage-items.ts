@@ -1,5 +1,5 @@
 import { ProcessTriageInput } from "@/contracts/workflow.contracts";
-import { TriageItem } from "@/adapters/triage/selectors/collect-triage-items";
+import { TriageItem } from "@/contracts/adapter.contracts";
 
 export function filterTriageItems(
     items: TriageItem[],

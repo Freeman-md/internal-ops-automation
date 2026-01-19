@@ -1,4 +1,4 @@
-import { TriageItem } from "@/adapters/triage/selectors/collect-triage-items";
+import { TriageItem } from "@/contracts/adapter.contracts";
 import { TRIAGE_STATES, TriageState } from "@/domain/triage/states";
 import { VerificationError } from "@/domain/errors/verification.error";
 
