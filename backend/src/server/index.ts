@@ -2,6 +2,7 @@ import express from "express";
 import { SERVER_HOST, SERVER_PORT } from "@/config/server.config";
 import triageRoutes from "@/server/routes/triage.routes";
 import ticketsRoutes from "@/server/routes/tickets.routes";
+import statusRoutes from "@/server/routes/status.routes";
 import { sendWorkflowError } from "@/server/http/responders";
 
 const app = express();
@@ -15,6 +16,7 @@ app.get("/health", (_req, res) => {
 
 app.use("/api", triageRoutes);
 app.use("/api", ticketsRoutes);
+app.use("/api", statusRoutes);
 
 app.use((req, res) => {
   sendWorkflowError(res, "Not found", 404, "UNKNOWN", { path: req.path });
