@@ -58,14 +58,22 @@ export async function runTicketsInspect(): Promise<
   );
 }
 
-export async function runTicketsAll(): Promise<{
-  start: WorkflowExecutionResult<WorkflowResult>;
-  resolve: WorkflowExecutionResult<WorkflowResult>;
-  inspect: WorkflowExecutionResult<WorkflowResult>;
-}> {
+export async function runTicketsAll(): Promise<
+  WorkflowExecutionResult<{
+    start: WorkflowExecutionResult<WorkflowResult>;
+    resolve: WorkflowExecutionResult<WorkflowResult>;
+    inspect: WorkflowExecutionResult<WorkflowResult>;
+  }>
+> {
+  const startedAt = Date.now();
   const inspect = await runTicketsInspect();
   if (!inspect.success) {
-    return { inspect, start: inspect, resolve: inspect };
+    const failed = inspect as Extract<typeof inspect, { success: false }>;
+    return {
+      success: false,
+      error: failed.error,
+      durationMs: Date.now() - startedAt,
+    };
   }
 
   const start = await runTicketsStart({
@@ -73,13 +81,30 @@ export async function runTicketsAll(): Promise<{
     expectedState: TICKET_STATES.OPEN,
   });
   if (!start.success) {
-    return { inspect, start, resolve: start };
+    const failed = start as Extract<typeof start, { success: false }>;
+    return {
+      success: false,
+      error: failed.error,
+      durationMs: Date.now() - startedAt,
+    };
   }
 
   const resolve = await runTicketsResolve({
     selector: { state: TICKET_STATES.IN_PROGRESS, limit: 10 },
     expectedState: TICKET_STATES.IN_PROGRESS,
   });
+  if (!resolve.success) {
+    const failed = resolve as Extract<typeof resolve, { success: false }>;
+    return {
+      success: false,
+      error: failed.error,
+      durationMs: Date.now() - startedAt,
+    };
+  }
 
-  return { inspect, start, resolve };
+  return {
+    success: true,
+    data: { inspect, start, resolve },
+    durationMs: Date.now() - startedAt,
+  };
 }
