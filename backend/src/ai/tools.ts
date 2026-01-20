@@ -13,6 +13,11 @@ import {
   runStatusSession,
 } from "@/server/services/status.service";
 import { runAuthenticate } from "@/server/services/auth.service";
+import {
+  validateNoInput,
+  validateTicketsInput,
+  validateTriageInput,
+} from "@/ai/validation";
 
 export type JsonSchema = {
   type: "object";
@@ -100,64 +105,91 @@ export const aiTools = [
     name: "triage.process",
     description: "Process triage items by selector and expected state.",
     inputSchema: triageProcessSchema,
-    run: (input: ProcessTriageInput) =>
-      runTriageProcess(input),
+    run: (input: ProcessTriageInput) => {
+      validateTriageInput(input);
+      return runTriageProcess(input);
+    },
   },
   {
     name: "triage.inspect",
     description: "Inspect the triage queue and validate counts.",
     inputSchema: triageInspectSchema,
-    run: () => runTriageInspect(),
+    run: (input: unknown) => {
+      validateNoInput(input);
+      return runTriageInspect();
+    },
   },
   {
     name: "tickets.start",
     description: "Start open tickets based on selector and expected state.",
     inputSchema: ticketsProcessSchema,
-    run: (input: ProcessTicketsInput) =>
-      runTicketsStart(input),
+    run: (input: ProcessTicketsInput) => {
+      validateTicketsInput(input);
+      return runTicketsStart(input);
+    },
   },
   {
     name: "tickets.resolve",
     description: "Resolve in-progress tickets based on selector and expected state.",
     inputSchema: ticketsProcessSchema,
-    run: (input: ProcessTicketsInput) =>
-      runTicketsResolve(input),
+    run: (input: ProcessTicketsInput) => {
+      validateTicketsInput(input);
+      return runTicketsResolve(input);
+    },
   },
   {
     name: "tickets.inspect",
     description: "Inspect ticket state integrity and summary.",
     inputSchema: noInputSchema,
-    run: () => runTicketsInspect(),
+    run: (input: unknown) => {
+      validateNoInput(input);
+      return runTicketsInspect();
+    },
   },
   {
     name: "tickets.all",
     description: "Inspect, start, and resolve tickets in sequence.",
     inputSchema: noInputSchema,
-    run: () => runTicketsAll(),
+    run: (input: unknown) => {
+      validateNoInput(input);
+      return runTicketsAll();
+    },
   },
   {
     name: "status.session",
     description: "Check session health and authenticated user info.",
     inputSchema: noInputSchema,
-    run: () => runStatusSession(),
+    run: (input: unknown) => {
+      validateNoInput(input);
+      return runStatusSession();
+    },
   },
   {
     name: "status.authAction",
     description: "Perform authenticated action and verify results.",
     inputSchema: noInputSchema,
-    run: () => runStatusAuthAction(),
+    run: (input: unknown) => {
+      validateNoInput(input);
+      return runStatusAuthAction();
+    },
   },
   {
     name: "status.all",
     description: "Run session and authenticated-action checks.",
     inputSchema: noInputSchema,
-    run: () => runStatusAll(),
+    run: (input: unknown) => {
+      validateNoInput(input);
+      return runStatusAll();
+    },
   },
   {
     name: "auth.authenticate",
     description: "Create or refresh an authenticated session.",
     inputSchema: noInputSchema,
-    run: () => runAuthenticate(),
+    run: (input: unknown) => {
+      validateNoInput(input);
+      return runAuthenticate();
+    },
   },
 ] as const satisfies readonly ToolDefinition<unknown, ToolOutput>[];
 
