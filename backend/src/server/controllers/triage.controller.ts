@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ProcessTriageInput } from "@/contracts/workflow.contracts";
 import { runTriageInspect, runTriageProcess } from "@/server/services/triage.service";
+import { sendWorkflowError } from "@/server/http/responders";
 
 export async function triageProcess(
   req: Request<unknown, unknown, ProcessTriageInput>,
@@ -9,9 +10,12 @@ export async function triageProcess(
 ) {
   try {
     if (!req.body?.selector?.state) {
-      res.status(400).json({
-        error: "Missing selector.state",
-      });
+      sendWorkflowError(res, "Missing selector.state", 400);
+      return;
+    }
+    
+    if (!req.body?.expectedState) {
+      sendWorkflowError(res, "Missing expectedState", 400);
       return;
     }
 

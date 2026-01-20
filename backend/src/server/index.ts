@@ -1,6 +1,7 @@
 import express from "express";
 import { SERVER_HOST, SERVER_PORT } from "@/config/server.config";
 import triageRoutes from "@/server/routes/triage.routes";
+import { sendWorkflowError } from "@/server/http/responders";
 
 const app = express();
 
@@ -14,11 +15,11 @@ app.get("/health", (_req, res) => {
 app.use("/api", triageRoutes);
 
 app.use((req, res) => {
-  res.status(404).json({ error: "Not found", path: req.path });
+  sendWorkflowError(res, "Not found", 404, "UNKNOWN", { path: req.path });
 });
 
 app.use((error: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  res.status(500).json({ error: error.message || "Internal server error" });
+  sendWorkflowError(res, error.message || "Internal server error", 500);
 });
 
 app.listen(SERVER_PORT, SERVER_HOST, () => {
