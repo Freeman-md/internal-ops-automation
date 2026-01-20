@@ -4,7 +4,18 @@
   "main": "index.js",
   "scripts": {
     "test:headless": "npx vitest --browser.headless",
-    "test": "npx vitest"
+    "test": "npx vitest",
+    "workflow:authenticate": "tsx src/runners/authenticate.ts",
+    "workflow:triage-process": "tsx src/runners/triage-process.ts",
+    "workflow:triage-inspect": "tsx src/runners/triage-inspect.ts",
+    "workflow:triage-all": "tsx src/runners/triage-all.ts",
+    "workflow:tickets-start": "tsx src/runners/tickets-start.ts",
+    "workflow:tickets-resolve": "tsx src/runners/tickets-resolve.ts",
+    "workflow:tickets-inspect": "tsx src/runners/tickets-inspect.ts",
+    "workflow:tickets-all": "tsx src/runners/tickets-all.ts",
+    "workflow:status-auth-action": "tsx src/runners/status-auth-action.ts",
+    "workflow:status-session": "tsx src/runners/status-session.ts",
+    "workflow:status-all": "tsx src/runners/status-all.ts"
   },
   "keywords": [],
   "author": "",
