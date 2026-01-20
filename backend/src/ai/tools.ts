@@ -204,3 +204,9 @@ export function getToolByName(name: string) {
 export function toToolId(name: string) {
   return createToolName(name);
 }
+
+const toolIdMap = new Map(aiTools.map((tool) => [toToolId(tool.name), tool.name]));
+
+export function fromToolId(id: string) {
+  return toolIdMap.get(id) ?? id;
+}
