@@ -23,6 +23,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@ai-sdk/openai": "^0.0.36",
+    "ai": "^4.0.17",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
     "playwright": "^1.57.0"
