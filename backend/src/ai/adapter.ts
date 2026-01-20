@@ -1,6 +1,6 @@
 import { generateText, jsonSchema, tool } from "ai";
 import { getAIClientConfig, getAIProvider } from "@/ai/provider";
-import { aiTools } from "@/ai/tools";
+import { aiTools, toToolId } from "@/ai/tools";
 
 export type AIIntentResult = {
   matched: boolean;
@@ -11,7 +11,7 @@ export type AIIntentResult = {
 
 function buildToolSet() {
   const entries = aiTools.map((definition) => [
-    definition.name,
+    toToolId(definition.name),
     tool({
       description: definition.description,
       parameters: jsonSchema(definition.inputSchema),
@@ -48,7 +48,7 @@ export async function runAIIntent(prompt: string): Promise<AIIntentResult> {
     name: call.toolName,
     args: call.args,
   }));
-  
+
   const toolResults = (result.toolResults as Array<{
     toolName: string;
     result: unknown;

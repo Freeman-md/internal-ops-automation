@@ -100,6 +100,8 @@ const noInputSchema: JsonSchema = {
   additionalProperties: false,
 };
 
+const createToolName = (name: string) => name.replace(/\./g, "_");
+
 export const aiTools = [
   {
     name: "triage.process",
@@ -197,4 +199,8 @@ export type AIToolName = (typeof aiTools)[number]["name"];
 
 export function getToolByName(name: string) {
   return aiTools.find((tool) => tool.name === name);
+}
+
+export function toToolId(name: string) {
+  return createToolName(name);
 }
