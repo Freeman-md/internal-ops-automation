@@ -1,8 +1,8 @@
 import { SESSION_PATH } from "@/config/app.config";
 import { HEADED, WORKFLOW_RETRIES } from "@/config/runtime.config";
-import { executeWorkflow } from "@/infra/execute-workflow";
 import { startTicketWorkflow } from "@/app/workflows/tickets/start";
 import { TICKET_STATES } from "@/domain/tickets/states";
+import { executeWorkflow } from "@/infra/execute-workflow";
 
 async function run() {
   const result = await executeWorkflow(
