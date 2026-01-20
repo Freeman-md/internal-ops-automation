@@ -39,16 +39,36 @@ export async function runStatusAuthAction(): Promise<
   );
 }
 
-export async function runStatusAll(): Promise<{
-  session: WorkflowExecutionResult<WorkflowResult>;
-  authAction: WorkflowExecutionResult<WorkflowResult>;
-}> {
+export async function runStatusAll(): Promise<
+  WorkflowExecutionResult<{
+    session: WorkflowExecutionResult<WorkflowResult>;
+    authAction: WorkflowExecutionResult<WorkflowResult>;
+  }>
+> {
+  const startedAt = Date.now();
   const session = await runStatusSession();
   if (!session.success) {
-    return { session, authAction: session };
+    const failed = session as Extract<typeof session, { success: false }>;
+    return {
+      success: false,
+      error: failed.error,
+      durationMs: Date.now() - startedAt,
+    };
   }
 
   const authAction = await runStatusAuthAction();
+  if (!authAction.success) {
+    const failed = authAction as Extract<typeof authAction, { success: false }>;
+    return {
+      success: false,
+      error: failed.error,
+      durationMs: Date.now() - startedAt,
+    };
+  }
 
-  return { session, authAction };
+  return {
+    success: true,
+    data: { session, authAction },
+    durationMs: Date.now() - startedAt,
+  };
 }
