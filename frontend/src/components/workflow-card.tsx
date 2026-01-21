@@ -16,6 +16,8 @@ type WorkflowCardProps = {
   method: string;
   tags: string[];
   intent: string;
+  isRunning?: boolean;
+  onRun?: () => void;
 };
 
 export function WorkflowCard({
@@ -25,6 +27,8 @@ export function WorkflowCard({
   method,
   tags,
   intent,
+  isRunning,
+  onRun,
 }: WorkflowCardProps) {
   return (
     <Card className="group h-full border-border/60 bg-card/80 shadow-lg shadow-black/5 transition-transform duration-200 hover:-translate-y-1">
@@ -55,7 +59,9 @@ export function WorkflowCard({
           Intent:{" "}
           <span className="font-medium text-foreground/80">{intent}</span>
         </div>
-        <Button variant="outline">Run</Button>
+        <Button variant="outline" onClick={onRun} disabled={isRunning}>
+          {isRunning ? "Running..." : "Run"}
+        </Button>
       </CardFooter>
     </Card>
   );

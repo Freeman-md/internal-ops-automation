@@ -12,74 +12,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "./components/ui/card";
 import { Separator } from "./components/ui/separator";
 import { Textarea } from "./components/ui/textarea";
 import { WorkflowCard } from "./components/workflow-card";
+import { workflowCatalog } from "./data/workflows";
+import { useWorkflowRunner } from "./hooks/use-workflow-runner";
+import { useAiIntent } from "./hooks/use-ai-intent";
 
 function App() {
-  const workflows = [
-    {
-      title: "Triage Process",
-      description: "Process pending triage items with deterministic checks.",
-      endpoint: "/api/triage/process",
-      method: "POST",
-      tags: ["Triage", "Auth", "Input"],
-      intent: "process triage",
-    },
-    {
-      title: "Triage Inspect",
-      description: "Verify queue counts and surface state summaries.",
-      endpoint: "/api/triage/inspect",
-      method: "POST",
-      tags: ["Triage", "Auth"],
-      intent: "inspect triage queue",
-    },
-    {
-      title: "Tickets Start",
-      description: "Start open tickets and confirm state transitions.",
-      endpoint: "/api/tickets/start",
-      method: "POST",
-      tags: ["Tickets", "Auth", "Input"],
-      intent: "start tickets",
-    },
-    {
-      title: "Tickets Resolve",
-      description: "Resolve in-progress tickets and verify summaries.",
-      endpoint: "/api/tickets/resolve",
-      method: "POST",
-      tags: ["Tickets", "Auth", "Input"],
-      intent: "resolve tickets",
-    },
-    {
-      title: "Tickets Inspect",
-      description: "Check ticket state integrity without changes.",
-      endpoint: "/api/tickets/inspect",
-      method: "POST",
-      tags: ["Tickets", "Auth"],
-      intent: "inspect tickets",
-    },
-    {
-      title: "Status Session",
-      description: "Verify session health and authenticated user info.",
-      endpoint: "/api/status/session",
-      method: "POST",
-      tags: ["Status", "Auth"],
-      intent: "check session",
-    },
-    {
-      title: "Status Auth Action",
-      description: "Run an authenticated action and verify it changed.",
-      endpoint: "/api/status/auth-action",
-      method: "POST",
-      tags: ["Status", "Auth"],
-      intent: "inspect authenticated action",
-    },
-    {
-      title: "Authenticate",
-      description: "Create or refresh a session state file.",
-      endpoint: "/api/auth/authenticate",
-      method: "POST",
-      tags: ["Auth"],
-      intent: "authenticate",
-    },
-  ];
+  const apiBase = import.meta.env.VITE_API_BASE ?? "http://0.0.0.0:3000";
+  const workflows = workflowCatalog;
+  const { activeWorkflow, workflowResult, runWorkflow } =
+    useWorkflowRunner(apiBase);
+  const {
+    intentPrompt,
+    setIntentPrompt,
+    intentRunning,
+    intentStream,
+    runIntent,
+  } = useAiIntent(apiBase);
 
   return (
     <div className="min-h-screen bg-[radial-gradient(60%_80%_at_0%_0%,rgba(245,221,179,0.35)_0%,rgba(245,221,179,0)_70%),radial-gradient(60%_80%_at_100%_0%,rgba(198,236,225,0.3)_0%,rgba(198,236,225,0)_70%),linear-gradient(180deg,#fefbf6_0%,#f8f4ee_55%,#f4f0ea_100%)] text-foreground">
@@ -146,7 +94,12 @@ function App() {
 
           <div className="grid gap-4 md:grid-cols-2">
             {workflows.map((workflow) => (
-              <WorkflowCard key={workflow.title} {...workflow} />
+              <WorkflowCard
+                key={workflow.title}
+                {...workflow}
+                isRunning={activeWorkflow === workflow.title}
+                onRun={() => runWorkflow(workflow)}
+              />
             ))}
           </div>
         </section>
@@ -163,16 +116,27 @@ function App() {
               <Textarea
                 placeholder="Describe what you want to run, e.g. 'inspect triage queue' or 'resolve tickets'"
                 className="min-h-[120px]"
+                value={intentPrompt}
+                onChange={(event) => setIntentPrompt(event.target.value)}
               />
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="text-xs text-muted-foreground">
                   The AI will map your intent to a workflow and run it
                   immediately.
                 </div>
-                <Button className="gap-2">
+                <Button className="gap-2" onClick={runIntent} disabled={intentRunning}>
                   <Bot className="h-4 w-4" />
-                  Run Intent
+                  {intentRunning ? "Running..." : "Run Intent"}
                 </Button>
+              </div>
+              <div className="rounded-lg border border-dashed border-border/60 bg-background/70 p-4 text-xs text-muted-foreground">
+                {intentStream ? (
+                  <pre className="whitespace-pre-wrap font-mono text-xs">
+                    {intentStream}
+                  </pre>
+                ) : (
+                  "AI stream output will appear here."
+                )}
               </div>
             </CardContent>
           </Card>
@@ -195,8 +159,13 @@ function App() {
                   Latest Activity
                 </div>
                 <div className="rounded-lg border border-dashed border-border/60 bg-card/60 p-4 text-xs">
-                  No workflow runs yet. Trigger a workflow or send an AI intent
-                  to start streaming logs.
+                  {workflowResult ? (
+                    <pre className="whitespace-pre-wrap font-mono text-xs text-foreground">
+                      {workflowResult}
+                    </pre>
+                  ) : (
+                    "No workflow runs yet. Trigger a workflow or send an AI intent to start streaming logs."
+                  )}
                 </div>
               </div>
             </CardContent>
