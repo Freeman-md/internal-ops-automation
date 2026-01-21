@@ -140,3 +140,38 @@ Streaming response uses `text/event-stream` with `writeData(...)` parts:
 ```json
 { "type": "final", "matched": true }
 ```
+
+## Workflows (stream)
+
+`POST /workflows/run`
+
+Request body:
+```json
+{
+  "name": "triage.process",
+  "input": {
+    "selector": {
+      "state": "pending",
+      "limit": 10
+    },
+    "expectedState": "pending"
+  }
+}
+```
+
+Streaming response parts:
+```json
+{ "type": "start", "name": "triage.process" }
+```
+
+```json
+{ "type": "log", "event": { "scope": "...", "level": "...", "message": "...", "meta": {}, "timeStamp": 0 } }
+```
+
+```json
+{ "type": "result", "result": { "success": true, "data": {}, "durationMs": 1234 } }
+```
+
+```json
+{ "type": "final" }
+```

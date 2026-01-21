@@ -75,3 +75,7 @@ npm run dev
 ## API Contract
 
 See [docs/api.md](docs/api.md) for endpoint and streaming payload details.
+
+## Future Improvements
+
+See [docs/future-improvements.md](docs/future-improvements.md) for known limitations and planned fixes.

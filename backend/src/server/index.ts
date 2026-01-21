@@ -5,6 +5,7 @@ import ticketsRoutes from "@/server/routes/tickets.routes";
 import statusRoutes from "@/server/routes/status.routes";
 import authRoutes from "@/server/routes/auth.routes";
 import aiRoutes from "@/server/routes/ai.routes";
+import workflowsRoutes from "@/server/routes/workflows.routes";
 import { sendWorkflowError } from "@/server/http/responders";
 
 const app = express();
@@ -21,6 +22,7 @@ app.use("/api", ticketsRoutes);
 app.use("/api", statusRoutes);
 app.use("/api", authRoutes);
 app.use("/api", aiRoutes);
+app.use("/api", workflowsRoutes);
 
 app.use((req, res) => {
   sendWorkflowError(res, "Not found", 404, "UNKNOWN", { path: req.path });

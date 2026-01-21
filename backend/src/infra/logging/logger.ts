@@ -11,6 +11,10 @@ export function registerLogSink(sink: LogSink) {
     sinks.push(sink)
 }
 
+export function unregisterLogSink(sink: LogSink) {
+    sinks = sinks.filter(existing => existing !== sink)
+}
+
 export function log(
     scope: string,
     message: string,
