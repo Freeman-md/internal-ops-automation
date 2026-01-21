@@ -80,7 +80,7 @@ export function RunSession() {
       const decoder = new TextDecoder();
       let buffer = "";
 
-      const pushEvent = (payload: { type?: string }) => {
+      const pushEvent = (payload: { type?: string, result: object }) => {
         counterRef.current += 1;
         const id = `${runId}-${counterRef.current}`;
         const eventType = payload.type ?? "data";
@@ -115,6 +115,7 @@ export function RunSession() {
           const items = Array.isArray(parsed) ? parsed : [parsed];
           items.forEach((payload) => pushEvent(payload));
         } catch {
+          // Silently ignore JSON parsing errors
         }
       };
 
