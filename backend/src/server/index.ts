@@ -1,5 +1,6 @@
 import express from "express";
-import { SERVER_HOST, SERVER_PORT } from "@/config/server.config";
+import cors from "cors";
+import { CORS_ORIGINS, SERVER_HOST, SERVER_PORT } from "@/config/server.config";
 import triageRoutes from "@/server/routes/triage.routes";
 import ticketsRoutes from "@/server/routes/tickets.routes";
 import statusRoutes from "@/server/routes/status.routes";
@@ -10,6 +11,17 @@ import { sendWorkflowError } from "@/server/http/responders";
 
 const app = express();
 
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || CORS_ORIGINS.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(new Error("CORS origin not allowed"));
+    },
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
