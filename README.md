@@ -6,14 +6,21 @@ between domain rules, adapters, workflows, infrastructure, and runners.
 ## Repo Layout
 
 ```
-backend/   # automation codebase (current)
-frontend/  # UI (future)
+backend/   # automation + API server
+frontend/  # React UI (Vite + Tailwind + shadcn/ui)
 ```
 
-## Install
+## Install (Backend)
 
 ```bash
 cd backend
+npm install
+```
+
+## Install (Frontend)
+
+```bash
+cd frontend
 npm install
 ```
 
@@ -29,11 +36,30 @@ npx tsx src/runners/authenticate.ts
 npx tsx src/runners/triage-process.ts
 ```
 
+## Run the API Server
+
+```bash
+npm run api:dev
+```
+
+## Run the Frontend
+
+```bash
+npm run dev
+```
+
 ## Environment Variables
 
 - `HEADED` (`true`/`1`) to run headed for debugging
 - `WORKFLOW_RETRIES` (number, default `1`)
 - `SLOWMO` or `PLAYWRIGHT_SLOWMO` (milliseconds, default `0`)
+
+## UI Stack
+
+- React + Vite
+- Tailwind CSS
+- shadcn/ui components
+- shadcn AI components: `https://www.shadcn.io/ai`
 
 ## Architecture (High-Level)
 
