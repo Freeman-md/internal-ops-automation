@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Bot, CheckCircle2, Loader2, ScrollText } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
-import { Separator } from "../components/ui/separator";
 
 type RunState =
   | {
@@ -18,7 +17,7 @@ type RunState =
     };
 
 type StreamEvent = {
-  id: number;
+  id: string;
   type: string;
   payload: unknown;
   receivedAt: number;
@@ -32,6 +31,9 @@ export function RunSession() {
   const [status, setStatus] = useState<"idle" | "running" | "done" | "error">("idle");
   const [events, setEvents] = useState<StreamEvent[]>([]);
   const [resultSummary, setResultSummary] = useState<string>("");
+  const counterRef = useRef(0);
+  const controllerRef = useRef<AbortController | null>(null);
+  const runIdRef = useRef(0);
 
   const heading = useMemo(() => {
     if (!state) return "No run selected";
@@ -42,7 +44,12 @@ export function RunSession() {
   useEffect(() => {
     if (!state) return;
 
+    runIdRef.current += 1;
+    const runId = runIdRef.current;
+    counterRef.current = 0;
+
     const controller = new AbortController();
+    controllerRef.current = controller;
     const run = async () => {
       setStatus("running");
       setEvents([]);
@@ -72,7 +79,29 @@ export function RunSession() {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
-      let counter = 0;
+
+      const pushEvent = (payload: { type?: string }) => {
+        counterRef.current += 1;
+        const id = `${runId}-${counterRef.current}`;
+        const eventType = payload.type ?? "data";
+
+        setEvents((prev) => [
+          ...prev,
+          {
+            id,
+            type: eventType,
+            payload,
+            receivedAt: Date.now(),
+          },
+        ]);
+
+        if (eventType === "result") {
+          setResultSummary(JSON.stringify(payload.result ?? payload, null, 2));
+        }
+        if (eventType === "final") {
+          setStatus("done");
+        }
+      };
 
       const handleLine = (line: string) => {
         const trimmed = line.trim();
@@ -84,26 +113,7 @@ export function RunSession() {
         try {
           const parsed = JSON.parse(jsonPart);
           const items = Array.isArray(parsed) ? parsed : [parsed];
-          items.forEach((payload) => {
-            const eventType = payload.type ?? "data";
-            counter += 1;
-            setEvents((prev) => [
-              ...prev,
-              {
-                id: counter,
-                type: eventType,
-                payload,
-                receivedAt: Date.now(),
-              },
-            ]);
-
-            if (eventType === "result") {
-              setResultSummary(JSON.stringify(payload.result ?? payload, null, 2));
-            }
-            if (eventType === "final") {
-              setStatus("done");
-            }
-          });
+          items.forEach((payload) => pushEvent(payload));
         } catch {
         }
       };
@@ -117,7 +127,7 @@ export function RunSession() {
         lines.forEach(handleLine);
       }
 
-      if (status === "running") {
+      if (!controller.signal.aborted) {
         setStatus("done");
       }
     };
@@ -132,15 +142,23 @@ export function RunSession() {
 
     return () => {
       controller.abort();
+      controllerRef.current = null;
     };
-  }, [apiBase, state, status]);
+  }, [apiBase, state]);
 
   return (
     <div className="min-h-screen bg-[radial-gradient(70%_90%_at_0%_0%,rgba(205,220,255,0.4)_0%,rgba(205,220,255,0)_70%),radial-gradient(60%_80%_at_100%_0%,rgba(255,223,197,0.35)_0%,rgba(255,223,197,0)_70%),linear-gradient(180deg,#f7f7fb_0%,#f3f2f7_55%,#efedf2_100%)] text-foreground">
       <div className="mx-auto flex max-w-5xl flex-col gap-6 px-6 pb-20 pt-10">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="icon" onClick={() => navigate("/")}>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                controllerRef.current?.abort();
+                navigate("/");
+              }}
+            >
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div>
