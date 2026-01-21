@@ -71,3 +71,7 @@ npm run dev
 - `backend/src/infra`: browser/auth/logging/session/executor infrastructure
 - `backend/src/runners`: CLI entry points
 - `backend/src/human`: manual interaction gates
+
+## API Contract
+
+See [docs/api.md](docs/api.md) for endpoint and streaming payload details.
