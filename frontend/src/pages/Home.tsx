@@ -4,14 +4,11 @@ import {
   Bot,
   Gauge,
   Play,
-  ScrollText,
   ShieldCheck,
   Workflow,
 } from "lucide-react";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
-import { Separator } from "../components/ui/separator";
 import { Textarea } from "../components/ui/textarea";
 import { WorkflowCard } from "../components/workflow-card";
 import { workflowCatalog } from "../data/workflows";
@@ -38,7 +35,7 @@ export function Home() {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(60%_80%_at_0%_0%,rgba(245,221,179,0.35)_0%,rgba(245,221,179,0)_70%),radial-gradient(60%_80%_at_100%_0%,rgba(198,236,225,0.3)_0%,rgba(198,236,225,0)_70%),linear-gradient(180deg,#fefbf6_0%,#f8f4ee_55%,#f4f0ea_100%)] text-foreground">
-      <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 pb-28 pt-10">
+      <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 pb-40 pt-10">
         <header className="flex flex-col gap-6">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -110,58 +107,27 @@ export function Home() {
           </div>
         </section>
 
-        <section className="grid gap-4 md:grid-cols-[1.2fr_0.8fr]">
-          <Card className="border-border/60 bg-card/80">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Bot className="h-5 w-5" />
-                AI Intent Router
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Textarea
-                placeholder="Describe what you want to run, e.g. 'inspect triage queue' or 'resolve tickets'"
-                className="min-h-[120px]"
-                value={intentPrompt}
-                onChange={(event) => setIntentPrompt(event.target.value)}
-              />
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="text-xs text-muted-foreground">
-                  The AI will map your intent to a workflow and run it
-                  immediately.
-                </div>
-                <Button className="gap-2" onClick={handleRunIntent}>
-                  <Bot className="h-4 w-4" />
-                  Run Intent
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+      </div>
 
-          <Card className="border-border/60 bg-background/80">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <ScrollText className="h-5 w-5" />
-                Run Feed
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 text-sm text-muted-foreground">
-              <p>
-                Runs stream in a dedicated view with a back button for quick
-                navigation.
-              </p>
-              <Separator />
-              <div className="space-y-2">
-                <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
-                  Latest Activity
-                </div>
-                <div className="rounded-lg border border-dashed border-border/60 bg-card/60 p-4 text-xs">
-                  Trigger a workflow or send an AI intent to open the run view.
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
+      <div className="fixed bottom-6 left-1/2 w-[min(780px,92vw)] -translate-x-1/2">
+        <div className="rounded-full border border-white/30 bg-white/20 px-5 py-3 shadow-2xl shadow-black/10 backdrop-blur-xl">
+          <div className="flex items-end gap-3 ">
+            <Textarea
+              placeholder="Ask the AI to run a workflow (e.g. inspect triage queue, resolve tickets)"
+              className="min-h-6! flex-1 resize-none border-0 bg-transparent p-0 text-sm text-foreground shadow-none placeholder:text-muted-foreground/70 focus-visible:outline-none focus-visible:ring-0"
+              value={intentPrompt}
+              onChange={(event) => setIntentPrompt(event.target.value)}
+              rows={1}
+            />
+            <Button className="h-10 gap-2 rounded-full" onClick={handleRunIntent}>
+              <Bot className="h-4 w-4" />
+              Run
+            </Button>
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">
+            The AI router executes the best-fit workflow and streams results in the run view.
+          </p>
+        </div>
       </div>
     </div>
   );
